@@ -6,10 +6,15 @@
 
 package projectdeposit;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,14 +27,22 @@ public abstract class StoreRegistery extends Process{
     List<Registery> data;
     List<Category> categoryList;
     FileOutputStream fout;
+    File file;
     String filename;
     Category currentCategory;
+    boolean exist;
+    public abstract int store();
     
-    public abstract void store();
+    @Override
+    public void init() {
+        
+        
+    }
     
     @Override
     public void progress() {
         int category_size = categoryList.size();
+        int totalregnum = 0;
         
         for (int i = 0; i < category_size; i++) {
             currentCategory = categoryList.get(i);
@@ -39,16 +52,31 @@ public abstract class StoreRegistery extends Process{
             this.numofreg = currentCategory.getRegisteryList().size();
 
             try {
-                this.fout = new FileOutputStream(location+filename, true);
+                this.file = new File(location+filename);
+                
+                if(!file.exists()){
+                    exist = false;
+                    this.fout = new FileOutputStream(file);
+                    //this.oos = new ObjectOutputStream(fout);
+                }else{
+                    exist = true;
+                    this.fout = new FileOutputStream(file, true);
+                    //this.oos = new AppendableObjectOutputStream(fout);
+                }
+                
+                
             } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-                System.exit(-1);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-                System.exit(-1);
+                Logger.getLogger(GetObjectOptional.class.getName()).log(Level.SEVERE, file.getAbsolutePath() + " not found", ex);
+                break;
             }
             
-            store();
+            totalregnum += store();
         }
+        
+        System.out.println(totalregnum + " data has been stored successfully");
     }
+    
+    
+    
+    
 }
