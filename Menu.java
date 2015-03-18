@@ -180,12 +180,14 @@ public class Menu extends OptionalProcess implements Operations{
             
             if(!(value.equals("y"))){
                 System.out.println("Progress finished");
+                ObjectStorage store = new ObjectStorage(categoryList);
+                store.run();
+                categoryList.clear();
                 break;
             }
         }
         
-        ObjectStorage store = new ObjectStorage(categoryList);
-        store.run();
+        
     }
 
     @Override
